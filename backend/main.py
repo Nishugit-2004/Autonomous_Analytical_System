@@ -152,8 +152,13 @@ async def pipeline_insights():
         ai_insights = generate_insights(kpis, actions)
         
         from agents.seasonal_intelligence import SeasonalIntelligenceAgent
+        from agents.collaboration_agent import CollaborationAgent
+        
         seasonal_agent = SeasonalIntelligenceAgent()
         seasonal_payload = seasonal_agent.generate_intelligence(cleaned_df, inventory_recs)
+        
+        collab_agent = CollaborationAgent()
+        collab_payload = collab_agent.generate_collaboration_insights(cleaned_df)
         
         final_results = {
             "status": "success",
@@ -165,7 +170,8 @@ async def pipeline_insights():
             "debate": debate,
             "marketing": marketing,
             "ai_insights": ai_insights,
-            "seasonal_intelligence": seasonal_payload
+            "seasonal_intelligence": seasonal_payload,
+            "collaboration_intelligence": collab_payload
         }
         
         if "results" not in memory_db: memory_db["results"] = {}

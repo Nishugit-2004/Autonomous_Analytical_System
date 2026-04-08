@@ -47,7 +47,7 @@ const Dashboard = ({ results }) => {
   }
 
   // Normal Dataset Dashboard Logic
-  const { kpis, trends, top_products, external_context, seasonal_intelligence } = results;
+  const { kpis, trends, top_products, external_context, seasonal_intelligence, collaboration_intelligence } = results;
 
   return (
     <div className="space-y-6">
@@ -72,6 +72,88 @@ const Dashboard = ({ results }) => {
                       </div>
                   )
               })}
+          </div>
+      )}
+
+      {/* Product Collaboration Insights */}
+      {collaboration_intelligence && (
+          <div className="premium-card overflow-hidden border-2 border-indigo-100">
+              <div className="bg-gradient-to-r from-indigo-600 to-violet-500 p-6 text-white flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div>
+                      <h3 className="text-2xl font-bold flex items-center gap-2">
+                          <Eye size={24} /> Product Collaboration Insights
+                      </h3>
+                      <p className="text-indigo-100 font-medium mt-1">
+                          Live Intelligence across {collaboration_intelligence.network_size} retailers in {collaboration_intelligence.category}
+                      </p>
+                  </div>
+                  <div className="flex gap-2">
+                       <span className="bg-white/20 px-4 py-2 rounded-lg font-bold text-sm backdrop-blur border border-white/30 text-white shadow-sm">
+                           {collaboration_intelligence.network_size} Collaborators
+                       </span>
+                  </div>
+              </div>
+
+              <div className="p-6 grid grid-cols-1 xl:grid-cols-3 gap-6 bg-slate-50">
+                  {/* Shared Product Intelligence & Recommendations */}
+                  <div className="xl:col-span-1 space-y-6">
+                      <div>
+                          <h4 className="text-sm uppercase tracking-wider font-bold text-slate-500 mb-3">📡 Shared Intelligence</h4>
+                          <div className="space-y-2">
+                              {collaboration_intelligence.shared_insights.map((insight, idx) => (
+                                  <div key={idx} className="flex gap-2 items-start bg-indigo-50/50 p-3 rounded-lg border border-indigo-100">
+                                      <div className="text-indigo-500 mt-0.5">•</div>
+                                      <p className="text-sm font-medium text-slate-700">{insight}</p>
+                                  </div>
+                              ))}
+                          </div>
+                      </div>
+
+                      <div>
+                          <h4 className="text-sm uppercase tracking-wider font-bold text-slate-500 mb-3">💡 Collaborative Actions</h4>
+                          <div className="space-y-2">
+                              {collaboration_intelligence.ai_recommendations.map((rec, idx) => (
+                                  <div key={idx} className="flex gap-2 items-start bg-white p-3 rounded-lg border border-slate-200 shadow-sm">
+                                      <div className="text-emerald-500 mt-0.5"><BadgeAlert size={14} /></div>
+                                      <p className="text-sm font-medium text-slate-700">{rec}</p>
+                                  </div>
+                              ))}
+                          </div>
+                      </div>
+                  </div>
+
+                  {/* Comparative Product-Level Analytics */}
+                  <div className="xl:col-span-2 space-y-4">
+                      {collaboration_intelligence.product_level_data.map((item, idx) => (
+                          <div key={idx} className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col md:flex-row gap-4 items-center justify-between transition-all hover:border-indigo-300">
+                              <div className="flex-1 w-full">
+                                  <h4 className="font-bold text-lg text-slate-800">{item.product}</h4>
+                                  <div className="flex items-center gap-2 mt-1">
+                                      <span className="text-xs font-black text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded uppercase">Trend: {item.growth}</span>
+                                      <span className={`text-xs font-bold px-2 py-0.5 rounded uppercase ${item.stock_availability === 'Low' ? 'bg-rose-100 text-rose-600' : 'bg-blue-100 text-blue-600'}`}>
+                                          Stock: {item.stock_availability}
+                                      </span>
+                                  </div>
+                              </div>
+                              <div className="flex gap-6 w-full md:w-auto mt-4 md:mt-0">
+                                  <div className="text-center md:text-right">
+                                      <p className="text-xs font-bold text-slate-400 uppercase tracking-widest whitespace-nowrap">Your Demand</p>
+                                      <p className="font-black text-slate-700 text-lg">{item.my_demand}</p>
+                                      <p className="text-[10px] sm:text-xs font-semibold text-indigo-500 mt-0.5">Net: {item.network_total_demand}</p>
+                                  </div>
+                                  <div className="w-px bg-slate-200 self-stretch"></div>
+                                  <div className="text-center md:text-right">
+                                      <p className="text-xs font-bold text-slate-400 uppercase tracking-widest whitespace-nowrap">Your Price</p>
+                                      <p className="font-black text-slate-700 text-lg">${item.my_price}</p>
+                                      <p className="text-[10px] sm:text-xs font-semibold text-rose-500 mt-0.5">
+                                          Avg: ${item.network_avg_price}
+                                      </p>
+                                  </div>
+                              </div>
+                          </div>
+                      ))}
+                  </div>
+              </div>
           </div>
       )}
 
