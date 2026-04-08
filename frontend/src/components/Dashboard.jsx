@@ -1,7 +1,10 @@
 import { CloudLightning, CalendarDays, Camera, BadgeAlert, LocateFixed, Eye, Store, MapPin, TrendingUp, DollarSign, Users } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, BarChart, Bar, Legend } from 'recharts';
+import { useAppContext } from '../context/AppContext';
 
 const Dashboard = ({ results }) => {
+  const { simpleMode } = useAppContext();
+  
   if (!results) return null;
 
   // Render Vision Results if user scanned a shelf
@@ -49,6 +52,80 @@ const Dashboard = ({ results }) => {
 
   // Normal Dataset Dashboard Logic
   const { kpis, trends, top_products, external_context, seasonal_intelligence, collaboration_intelligence } = results;
+
+  // Render Simple Executive Mode
+  if (simpleMode) {
+      return (
+          <div className="max-w-4xl mx-auto space-y-6 mt-4 pb-20 animate-in fade-in zoom-in-95 duration-300">
+               <div className="text-center mb-8">
+                   <h2 className="text-3xl md:text-4xl font-black bg-clip-text text-transparent bg-gradient-to-r from-slate-800 to-slate-500">
+                       Executive Briefing
+                   </h2>
+                   <p className="text-slate-500 mt-2 font-medium text-lg">Distilled insights. Focus on what matters.</p>
+               </div>
+
+               {/* 1. The Bottom Line */}
+               {collaboration_intelligence && (
+                   <div className="bg-gradient-to-r from-emerald-500 to-teal-400 p-8 rounded-2xl shadow-lg flex flex-col md:flex-row items-center justify-between text-white border border-emerald-400">
+                       <div className="flex-1">
+                           <h3 className="font-bold text-2xl flex items-center gap-2">
+                               <TrendingUp size={28} /> Projected Network Growth
+                           </h3>
+                           <p className="text-emerald-50 text-base mt-2 max-w-md">
+                               Sharing localized stock data across {collaboration_intelligence.network_size} {collaboration_intelligence.category} stores uncovers a hidden margin opportunity.
+                           </p>
+                       </div>
+                       <div className="mt-6 md:mt-0 md:text-right bg-white/20 p-6 rounded-xl backdrop-blur-md border border-white/30">
+                           <p className="text-sm font-bold text-emerald-50 uppercase tracking-widest">Your Share</p>
+                           <p className="text-5xl font-black text-white mt-1">+${collaboration_intelligence.profit_sharing.breakdown[0].amount.toLocaleString()}</p>
+                       </div>
+                   </div>
+               )}
+
+               {/* 2. Top Critical Actions */}
+               <div className="bg-white p-8 rounded-2xl border border-rose-100 shadow-md relative overflow-hidden">
+                   <div className="absolute top-0 right-0 p-6 opacity-5"><BadgeAlert size={100} /></div>
+                   <h3 className="text-xl font-bold flex items-center gap-2 text-rose-600 mb-6 relative z-10">
+                       <BadgeAlert size={24} /> Recommended Immediate Actions
+                   </h3>
+                   <div className="space-y-4 relative z-10">
+                       {collaboration_intelligence?.ai_recommendations?.slice(0,2).map((rec, i) => (
+                           <div key={`collab-${i}`} className="flex gap-4 items-center bg-rose-50 p-4 rounded-xl border border-rose-100">
+                               <div className="w-2 h-2 rounded-full bg-rose-500 flex-shrink-0"></div>
+                               <p className="text-slate-700 font-bold text-lg">{rec}</p>
+                           </div>
+                       ))}
+                       {seasonal_intelligence?.recommended_actions?.slice(0,2).map((rec, i) => (
+                           <div key={`season-${i}`} className="flex gap-4 items-center bg-orange-50 p-4 rounded-xl border border-orange-100">
+                               <div className="w-2 h-2 rounded-full bg-orange-500 flex-shrink-0"></div>
+                               <p className="text-slate-700 font-bold text-lg">{rec}</p>
+                           </div>
+                       ))}
+                   </div>
+               </div>
+
+               {/* 3. Streamlined Top Product Pulse */}
+               <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-md">
+                   <h3 className="text-xl font-bold flex items-center gap-2 text-slate-800 mb-6">
+                       <Store size={24} /> Top Movers Matrix
+                   </h3>
+                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                     {top_products?.slice(0, 3).map((p, idx) => (
+                       <div key={idx} className="bg-slate-50 p-5 rounded-xl border border-slate-100 flex flex-col justify-between">
+                           <div>
+                               <span className="text-xs font-black text-slate-400 mb-1 block">RANK #{idx + 1}</span>
+                               <p className="font-bold text-lg text-slate-700">{p.product}</p>
+                           </div>
+                           <div className="mt-4 pt-4 border-t border-slate-200">
+                               <p className="font-black text-2xl text-primary">${p.sales.toLocaleString(undefined, {maximumFractionDigits: 0})}</p>
+                           </div>
+                       </div>
+                     ))}
+                   </div>
+               </div>
+          </div>
+      )
+  }
 
   return (
     <div className="space-y-6">
